@@ -52,6 +52,8 @@ def hello(name):
     return f"Hello {name} !"
 
 @app.route('/onlyget' , methods=['get'])
+
+
 def get_req():
     return "you can only get this webpage !"
 
