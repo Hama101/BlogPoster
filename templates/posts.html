@@ -20,10 +20,19 @@
         <hr>
 
     {% for post in posts  %}
+       <div>
         <h2>{{ post.title }}</h2>
         <p>  {{  post.content   }}   </p>
-        <!--form action="/deleted/{{post.id}}" method="post">
-        <input type="submit" value="Delete" >
-        </!--form-->
+
+        {%   if post.author   %}
+            <H4>By : {{post.author}}</H4>
+        {% else %}
+            <h4>By : N/A </h4>
+        {%endif%}
+
+        <a href="/posts/delete/{{post.id}}">Delete</a>
+        <a href="/posts/edit/{{post.id}}">Edit</a>
+        <hr>
+       </div>
     {% endfor %}
 {% endblock %}

@@ -1,6 +1,7 @@
 from flask import Flask , request, render_template ,redirect
 from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
+import time
 
 app = Flask(__name__)
 
@@ -14,7 +15,8 @@ class BlogPost(db.Model):
     title = db.Column(db.String(100) , nullable=False)
     content =db.Column(db.Text , nullable=False)
     author = db.Column(db.String ,nullable=False, default="N/A")
-    date_posted = db.Column(db.DateTime ,nullable=False , default=datetime.utcnow )
+    date_posted = db.Column(db.DateTime ,nullable=False
+                            , default=datetime.utcnow )
 
     def __repr__(self):
         return "Blog post " + str(self.id)
@@ -40,10 +42,26 @@ def showPosts():
         all_posts = BlogPost.query.order_by(BlogPost.date_posted).all()
         return render_template('posts.html',posts=all_posts)
 
-@app.route('/deleted/<string:id>' , methods=['GET','POST'])
+@app.route('/posts/delete/<int:id>')
 def deletePost(id):
-    all_posts = BlogPost.query.delete( int(id) )
-    return render_template('posts.html' , posts=all_posts)
+    post = BlogPost.query.get_or_404(id)
+    db.session.delete(post)
+    db.session.commit()
+    return redirect('/posts')
+
+
+@app.route('/posts/edit/<int:id>',methods=['GET','POST'])
+def editPost(id):
+    post = BlogPost.query.get_or_404(id)
+
+    if request.method == "POST":
+        post.title = request.form['title']
+        post.content = request.form['post']
+        post.author = request.form['author']
+        db.session.commit()
+        return redirect('/posts')
+    else:
+        return render_template('edit.html',post=post)
 
 
 
